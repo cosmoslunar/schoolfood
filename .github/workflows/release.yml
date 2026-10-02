@@ -1,6 +1,10 @@
 name: Build Windows EXE
 
 on:
+  push:
+    branches:
+      - main
+
   workflow_dispatch:
     inputs:
       version:
@@ -34,7 +38,14 @@ jobs:
             /p:IncludeNativeLibrariesForSelfExtract=true `
             -o publish
 
+      - name: Upload EXE artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: 급식알리미-win-x64
+          path: publish/급식알리미.exe
+
       - name: Create Release
+        if: github.event_name == 'workflow_dispatch'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ github.event.inputs.version }}
